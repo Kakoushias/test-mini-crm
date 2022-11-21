@@ -9,8 +9,6 @@ use Tests\TestCase;
 
 class PasswordUpdateTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_password_can_be_updated()
     {
         $user = User::factory()->create();
