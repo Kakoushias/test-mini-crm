@@ -19,8 +19,6 @@ class Client extends Model
         'email'
     ];
 
-    //todo: add table and move parsing to resource
-
     public function transactions(){
         return $this->hasMany(Transaction::class);
     }
