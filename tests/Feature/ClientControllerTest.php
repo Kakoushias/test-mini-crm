@@ -67,7 +67,7 @@ test('controller stores new client', function () {
 
     assertEquals($client->first_name, $firstName);
     assertEquals($client->last_name, $lastName);
-    assertEquals($client->avatar, 'storage/'.$file->hashName());
+    assertEquals($client->avatar, 'public/'.$file->hashName());
     assertEquals($client->email, $email);
 });
 
