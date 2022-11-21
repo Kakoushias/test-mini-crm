@@ -2,7 +2,8 @@
 
 ## About
 Basic application to manage Clients and their transactions.
-Built with Laravel, Vue and TailwindCSS
+Built with Laravel, Vue and TailwindCSS.
+
 
 ## Build instructions
 
@@ -10,9 +11,9 @@ Built with Laravel, Vue and TailwindCSS
 - run composer install
 - run npm install
 - run php artisan storage:link
-- create .env. Add newly created database details
+- create .env. Add newly created database details. Add APP_URL
 - php artisan key:generate
-- valet park
+- valet park && valet link
 - php artisan migrate
 - php artisan db:seed
 - npm run dev
