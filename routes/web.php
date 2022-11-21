@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/client-data', [ClientController::class, 'data']);
+    Route::get('/client-data', [ClientController::class, 'data'])->name('client-data');
     Route::resource('clients', ClientController::class);
     Route::resource('transactions', TransactionController::class);
 });

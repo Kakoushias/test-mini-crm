@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Transaction;
+use App\Repositories\TransactionReadRepository;
+use App\Repositories\TransactionWriteRepository;
+use Carbon\Carbon;
 
 class TransactionController extends Controller
 {
+    public function __construct(
+        protected TransactionReadRepository $readRepo,
+        protected TransactionWriteRepository $writeRepo
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,11 +25,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //left join client name, in repo
-        $transactions = Transaction::paginate(10);
-
         return view('transactions.index', [
-            'transactions' => $transactions
+            'transactions' => $this->readRepo->paginate(),
         ]);
     }
 
@@ -36,73 +43,78 @@ class TransactionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreTransactionRequest  $request
+     * @param \App\Http\Requests\StoreTransactionRequest $request
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(StoreTransactionRequest $request)
     {
-        $transaction = new Transaction();
-        $transaction->amount = $request->input('amount');
-        $transaction->client_id = $request->input('client_id');
-        $transaction->transaction_date = $request->input('transaction_date');
-        $transaction->save();
+        $this->writeRepo->store(
+            floatval($request->input('amount')),
+            $request->input('client_id'),
+            Carbon::parse($request->input('transaction_date'))
+        );
 
         return redirect()->route('transactions.index')->with([
-            'message'=> 'Transaction successfully created!'
+            'message' => 'Transaction successfully created!',
         ]);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Transaction  $transaction
+     * @param \App\Models\Transaction $transaction
+     *
      * @return \Illuminate\Http\Response
      */
     public function show(Transaction $transaction)
     {
-        $transaction->load(['client' => fn($q) => $q->withTrashed()]);
-
         return view('transactions.show', [
-            'transaction' => $transaction
+            'transaction' => $transaction->load(['client' => fn($q) => $q->withTrashed()]),
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Transaction  $transaction
+     * @param \App\Models\Transaction $transaction
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit(Transaction $transaction)
     {
         return view('transactions.edit', [
-            'transaction' => $transaction
+            'transaction' => $transaction,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateTransactionRequest  $request
-     * @param  \App\Models\Transaction  $transaction
+     * @param \App\Http\Requests\UpdateTransactionRequest $request
+     * @param \App\Models\Transaction $transaction
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        $transaction->amount = $request->input('amount');
-        $transaction->transaction_date = $request->input('transaction_date');
-        $transaction->client_id      = $request->input('client_id');
-        $transaction->save();
+        $this->writeRepo->update(
+            $transaction,
+            floatval($request->input('amount')),
+            $request->input('client_id'),
+            Carbon::parse($request->input('transaction_date'))
+        );
 
         return back()->with([
-            'message' => 'Transaction updated successfully!'
+            'message' => 'Transaction updated successfully!',
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Transaction  $transaction
+     * @param \App\Models\Transaction $transaction
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy(Transaction $transaction)

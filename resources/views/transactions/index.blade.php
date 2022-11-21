@@ -26,7 +26,7 @@
                         <thead class="bg-gray-100">
                         <tr>
                             <th class="text-left px-8 py-4">ID</th>
-                            <th class="text-left px-8 py-4">Client ID</th>
+                            <th class="text-left px-8 py-4">Client</th>
                             <th class="text-left px-8 py-4">Amount</th>
                             <th class="text-left px-8 py-4">Transaction Date</th>
                             <th class="text-right py-4">Actions</th>
@@ -38,7 +38,7 @@
                         @forelse($transactions as $transaction)
                             <tr class="hover:bg-stone-100" >
                                 <td class="text-left px-8 py-4">{{ $transaction->id }}</td>
-                                <td class="text-left px-8 py-4">{{ $transaction->client_id }}</td>
+                                <td class="text-left px-8 py-4">{{ $transaction->client->fullName()}}</td>
                                 <td class="text-left px-8 py-4">{{ $transaction->amount }}</td>
                                 <td class="text-left px-8 py-4">{{ $transaction->transaction_date }}</td>
                                 <td class="text-left">

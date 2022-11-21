@@ -27,7 +27,7 @@ class UpdateClientRequest extends FormRequest
         return [
             'first_name' => 'required|alpha',
             'last_name' => 'required|alpha',
-            'avatar'    => 'sometimes|image|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'avatar'    => 'sometimes|image|dimensions:min_width=100,min_height=100',
             'email'     =>  'required|email'
         ];
     }
