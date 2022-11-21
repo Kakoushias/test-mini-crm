@@ -1,6 +1,8 @@
 <h1 align="center">Interview exercise</h1>
 
 ## About
+Basic application to manage Clients and their transactions.
+Built with Laravel, Vue and TailwindCSS
 
 ## Build instructions
 
@@ -19,3 +21,9 @@
 email: administrator@test.com
 <br>
 password: password
+
+
+## Tests
+
+This project uses PestPHP.
+Run `pest` in the base directory to run test suite.
