@@ -19,7 +19,9 @@ return new class extends Migration
                   ->constrained()
                   ->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
+            $table->dateTimeTz('transaction_date');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

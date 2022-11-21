@@ -15,7 +15,12 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        //
+        //left join client name, in repo
+        $transactions = Transaction::paginate(10);
+
+        return view('transactions.index', [
+            'transactions' => $transactions
+        ]);
     }
 
     /**
@@ -25,7 +30,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+        return view('transactions.create');
     }
 
     /**
@@ -36,7 +41,15 @@ class TransactionController extends Controller
      */
     public function store(StoreTransactionRequest $request)
     {
-        //
+        $transaction = new Transaction();
+        $transaction->amount = $request->input('amount');
+        $transaction->client_id = $request->input('client_id');
+        $transaction->transaction_date = $request->input('transaction_date');
+        $transaction->save();
+
+        return redirect()->route('transactions.index')->with([
+            'message'=> 'Transaction successfully created!'
+        ]);
     }
 
     /**
@@ -47,7 +60,11 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        $transaction->load(['client' => fn($q) => $q->withTrashed()]);
+
+        return view('transactions.show', [
+            'transaction' => $transaction
+        ]);
     }
 
     /**
@@ -58,7 +75,9 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        return view('transactions.edit', [
+            'transaction' => $transaction
+        ]);
     }
 
     /**
@@ -70,7 +89,14 @@ class TransactionController extends Controller
      */
     public function update(UpdateTransactionRequest $request, Transaction $transaction)
     {
-        //
+        $transaction->amount = $request->input('amount');
+        $transaction->transaction_date = $request->input('transaction_date');
+        $transaction->client_id      = $request->input('client_id');
+        $transaction->save();
+
+        return back()->with([
+            'message' => 'Transaction updated successfully!'
+        ]);
     }
 
     /**
@@ -81,6 +107,8 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+
+        return redirect()->route('transactions.index')->with(['message' => 'Transaction deleted successfully']);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateTransactionRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateTransactionRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -24,7 +25,9 @@ class UpdateTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'client_id' => 'required|exists:clients,id',
+            'transaction_date' => 'required|date'
         ];
     }
 }

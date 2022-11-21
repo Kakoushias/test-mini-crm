@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Client;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,9 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'client_id' => Client::factory(),
+            'transaction_date' => fake()->date(),
+            'amount' => fake()->randomFloat(2, 0.01, 99999.99)
         ];
     }
 }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Models\Client;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ClientController extends Controller
 {
@@ -15,7 +17,23 @@ class ClientController extends Controller
      */
     public function index()
     {
-        return view('clients');
+        return response()->view('clients.index');
+    }
+
+    public function data(Request $request){
+        $pageNumber = $request->input('pageNumber');
+        $offset = $pageNumber == 1 ? null : ($pageNumber - 1) * 10;
+
+        $total = Client::count();
+        $clients = Client::limit(10)
+                         ->when($offset, fn ($q) => $q->offset($offset))
+                         ->get()
+                         ->toArray();
+
+        return response()->json([
+            'total' => $total,
+            'clients' => $clients
+        ]);
     }
 
     /**
@@ -25,7 +43,7 @@ class ClientController extends Controller
      */
     public function create()
     {
-        //
+        return response()->view('clients.create');
     }
 
     /**
@@ -36,7 +54,21 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request)
     {
-        //
+        $client = new Client();
+        $client->first_name = $request->input('first_name');
+        $client->last_name  = $request->input('last_name');
+        //fix shenanigans
+        $client->avatar = str_replace(
+            'public',
+            'storage',
+            $request->file('avatar')->store('public')
+        );
+        $client->email = $request->input('email');
+        $client->save();
+
+        return redirect()->route('clients.index')->with([
+            'message'=> 'Client successfully created!'
+        ]);
     }
 
     /**
@@ -47,7 +79,9 @@ class ClientController extends Controller
      */
     public function show(Client $client)
     {
-        //
+        return response()->view('clients.show', [
+            'client' => $client
+        ]);
     }
 
     /**
@@ -58,7 +92,9 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {
-        //
+        return response()->view('clients.edit', [
+            'client' => $client
+        ]);
     }
 
     /**
@@ -70,7 +106,19 @@ class ClientController extends Controller
      */
     public function update(UpdateClientRequest $request, Client $client)
     {
-        //
+        $client->first_name = $request->input('first_name');
+        $client->last_name = $request->input('last_name');
+        $client->email      = $request->input('email');
+
+        if ($file = $request->file('avatar')){
+            $client->avatar = $file->store('public');
+        }
+
+        $client->save();
+
+        return back()->with([
+            'message' => 'Client updated successfully!'
+        ]);
     }
 
     /**
@@ -81,6 +129,6 @@ class ClientController extends Controller
      */
     public function destroy(Client $client)
     {
-        //
+        $client->delete();
     }
 }

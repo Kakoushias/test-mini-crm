@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateClientRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateClientRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Auth::check();
     }
 
     /**
@@ -24,7 +25,10 @@ class UpdateClientRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'first_name' => 'required|alpha',
+            'last_name' => 'required|alpha',
+            'avatar'    => 'sometimes|image|dimensions:min_width=100,min_height=100,max_width=2000,max_height=2000',
+            'email'     =>  'required|email'
         ];
     }
 }
