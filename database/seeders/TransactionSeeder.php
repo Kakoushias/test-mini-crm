@@ -18,15 +18,15 @@ class TransactionSeeder extends Seeder
     {
         $clients = Client::get();
 
-        if ($clients->isEmpty()){
+        if ($clients->isEmpty()) {
             $clients = Client::factory()->count(100)->create();
         }
 
-        foreach ($clients as $client){
+        foreach ($clients as $client) {
             Transaction::factory()
-                ->count(20)
-                ->for($client)
-                ->create();
+                       ->count(20)
+                       ->for($client)
+                       ->create();
         }
     }
 }

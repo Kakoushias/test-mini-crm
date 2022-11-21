@@ -18,9 +18,9 @@ class TransactionFactory extends Factory
     public function definition()
     {
         return [
-            'client_id' => Client::factory(),
+            'client_id'        => Client::factory(),
             'transaction_date' => fake()->date(),
-            'amount' => fake()->randomFloat(2, 0.01, 99999.99)
+            'amount'           => fake()->randomFloat(2, 0.01, 99999.99),
         ];
     }
 }

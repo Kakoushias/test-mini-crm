@@ -10,14 +10,14 @@ test('controller fetches paginated data', function () {
     //seed transaction and authenticate administrator
     Transaction::factory()->count(100)->create();
     auth()->login(
-        User::whereName('administrator')->firstOrFail()
+        User::factory()->create()
     );
 
     //get first page, assert see only 10 clients returned
     /**
      * @var Illuminate\Testing\TestResponse $response
      * */
-    $response               = $this->get(route('transactions.index'));
+    $response = $this->get(route('transactions.index'));
 
     $transactions = collect($response->getOriginalContent()->getData()['transactions']->items());
     assertEquals($transactions->count(), 10);
@@ -27,7 +27,7 @@ test('controller fetches paginated data', function () {
     /**
      * @var Illuminate\Testing\TestResponse $response
      * */
-    $response               = $this->get(route('transactions.index', ['page' => 2]));
+    $response = $this->get(route('transactions.index', ['page' => 2]));
 
     $secondBatchTransactions = collect($response->getOriginalContent()->getData()['transactions']->items());
     assertEquals($secondBatchTransactions->count(), 10);

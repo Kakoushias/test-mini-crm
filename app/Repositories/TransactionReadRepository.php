@@ -8,9 +8,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class TransactionReadRepository
 {
-    public function paginate($pageSize = 10) : LengthAwarePaginator
+    public function paginate($pageSize = 10): LengthAwarePaginator
     {
         return Transaction::with('client')
-        ->paginate(10);
+                          ->paginate(10);
     }
 }

@@ -25,9 +25,9 @@ class StoreTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|regex:/^\d+(\.\d{1,2})?$/',
-            'client_id' => 'required|exists:clients,id',
-            'transaction_date' => 'required|date'
+            'amount'           => 'required|regex:/^\d+(\.\d{1,2})?$/',
+            'client_id'        => 'required|exists:clients,id',
+            'transaction_date' => 'required|date',
         ];
     }
 }

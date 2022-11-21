@@ -8,16 +8,16 @@ use Illuminate\Support\Facades\Storage;
 
 test('controller fetches paginated data', function () {
 
-    //seed clients and authenticate administrator
+    //seed clients and authenticate user
     Client::factory()->count(100)->create();
     auth()->login(
-        User::whereName('administrator')->firstOrFail()
+        User::factory()->create()
     );
 
     //get first page, assert only 10 clients returned
-    $response               = $this->get(route('client-data', ['pageNumber' => 1]));
+    $response = $this->get(route('client-data', ['pageNumber' => 1]));
 
-    $firstBatchIds          = collect(
+    $firstBatchIds = collect(
         $clients = $response->getData()
             ->clients
     )->pluck('id');
@@ -27,9 +27,9 @@ test('controller fetches paginated data', function () {
     assertEquals($numberOfClientsFetched, 10);
 
     //get second page, assert only 10 clients returned, and that they are different from the first page
-    $response               = $this->get(route('client-data', ['pageNumber' => 2]));
+    $response = $this->get(route('client-data', ['pageNumber' => 2]));
 
-    $secondBatchIds         = collect(
+    $secondBatchIds = collect(
         $clients = $response->getData()
             ->clients
     )->pluck('id');
@@ -47,8 +47,10 @@ test('controller fetches paginated data', function () {
 
 test('controller stores new client', function () {
 
-    //authenticate administrator
-    auth()->login(User::whereName('administrator')->firstOrFail());
+    //authenticate user
+    auth()->login(
+        User::factory()->create()
+    );
 
     //create fake file
     $file = UploadedFile::fake()->image('avatar.jpg', 250, 250);
@@ -56,24 +58,26 @@ test('controller stores new client', function () {
     //call api to store client, assert client correctly created
     $response = $this->post(route('clients.store'), [
         'first_name' => $firstName = fake()->firstName,
-        'last_name' => $lastName = fake()->lastName,
-        'avatar' => $file,
-        'email' => $email = fake()->email()
+        'last_name'  => $lastName = fake()->lastName,
+        'avatar'     => $file,
+        'email'      => $email = fake()->email(),
     ]);
 
     $client = Client::where('first_name', $firstName)
-    ->where('last_name', $lastName)
-    ->first();
+                    ->where('last_name', $lastName)
+                    ->first();
 
     assertEquals($client->first_name, $firstName);
     assertEquals($client->last_name, $lastName);
-    assertEquals($client->avatar, 'public/'.$file->hashName());
+    assertEquals($client->avatar, 'public/' . $file->hashName());
     assertEquals($client->email, $email);
 });
 
-test('controller store validation fails when it should', function (){
-    //authenticate administrator
-    auth()->login(User::whereName('administrator')->firstOrFail());
+test('controller store validation fails when it should', function () {
+    //authenticate user
+    auth()->login(
+        User::factory()->create()
+    );
 
     //create fake file, smaller dimensions than required
     $file = UploadedFile::fake()->image('avatar2.jpg', 50, 50);
@@ -81,9 +85,9 @@ test('controller store validation fails when it should', function (){
     //call api to store client, assert validation fail
     $response = $this->postJson(route('clients.store'), [
         'first_name' => fake()->firstName,
-        'last_name' => fake()->lastName,
-        'avatar' => $file,
-        'email' => fake()->email
+        'last_name'  => fake()->lastName,
+        'avatar'     => $file,
+        'email'      => fake()->email,
     ]);
 
     assertEquals($response->status(), 422);
@@ -94,47 +98,12 @@ test('controller store validation fails when it should', function (){
     //call api to store client, assert validation fail
     $response = $this->postJson(route('clients.store'), [
         'first_name' => fake()->firstName,
-        'last_name' => fake()->lastName,
-        'avatar' => $file,
-        'email' => fake()->name
+        'last_name'  => fake()->lastName,
+        'avatar'     => $file,
+        'email'      => fake()->name,
     ]);
 
     assertEquals($response->status(), 422);
 });
 
-//test('controller update validation fails when it should', function (){
-//    //authenticate administrator
-//    auth()->login(User::whereName('administrator')->firstOrFail());
-//
-//    $client = Client::factory()->create();
-//    //create fake file, smaller dimensions than required
-//    $file = UploadedFile::fake()->image('avatar3.jpg', 50, 50);
-//
-//    //call api to update client, assert validation fail
-//    $response = $this->getJson(route('clients.edit', [
-//        'client' => $client->id,
-//    ]), [
-//        'first_name' => $client->firstName,
-//        'last_name' => $client->lastName,
-//        'avatar' => $file,
-//        'email' => $client->email
-//    ]);
-//
-////    assertEquals($response->status(), 422);
-//
-//    //repeat the test with file with valid dimensions but wrong email format
-//    $file = UploadedFile::fake()->image('avatar4.jpg', 150, 150);
-//
-//    //call api to update client, assert validation fail
-//    $response = $this->getJson(route('clients.edit', [
-//        'client' => $client->id,
-//    ]), [
-//        'first_name' => $client->firstName,
-//        'last_name' => $client->lastName,
-//        'avatar' => $file,
-//        'email' => $client->name
-//    ]);
-//
-//    assertEquals($response->status(), 422);
-//});
 

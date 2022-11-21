@@ -45,7 +45,7 @@
                                 <tr>
                                     <td>{{$transaction->id}}</td>
                                     <td>{{$transaction->amount}}</td>
-                                    <td>{{$transaction->transaction_date->toDateTimeString()}}</td>
+                                    <td>{{$transaction->transaction_date}}</td>
                                     <td>{{$transaction->created_at}}</td>
                                     <td>{{$transaction->updated_at}}</td>
                                 </tr>

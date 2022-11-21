@@ -17,16 +17,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         User::updateOrCreate([
-             'name' => 'administrator',
-             'email' => 'administrator@test.com',
-             'password' => bcrypt('password')
-         ]);
+        User::updateOrCreate([
+            'email' => 'administrator@test.com',
+        ], [
+            'name'     => 'administrator',
+            'password' => bcrypt('password'),
+        ]);
 
-         //replace with each seeder
+        //replace with each seeder
         $clients = Client::factory()->count(100)->create();
 
-        foreach ($clients as $client){
+        foreach ($clients as $client) {
             Transaction::factory()
                        ->count(20)
                        ->for($client)
