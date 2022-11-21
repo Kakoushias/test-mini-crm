@@ -15,11 +15,9 @@ import { createApp } from 'vue';
 
 const app = createApp({});
 
-import { ClientTable, ServerTable } from "v-tables-3";
 import ClientsComponent from './components/Clients.vue';
 app.component('clients', ClientsComponent);
 
-app.use(ServerTable, {}, false);
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
